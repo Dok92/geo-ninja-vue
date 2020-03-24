@@ -46,6 +46,9 @@ export default {
           .replace(/^-|-$/g, "")
           .toLowerCase();
         let ref = db.collection("users").doc(this.slug);
+        // try to get doc('id'), if there is none, first create user in firebase authentication
+        // that then gets it's own uid
+        // and then set the doc(('id'): slug) in db with user's credentials as it's data
         ref.get().then(doc => {
           if (doc.exists) {
             this.feedback = "This alias already exists";
@@ -57,6 +60,7 @@ export default {
                 ref.set({
                   alias: this.alias,
                   geolocation: null,
+                  // create our own id property in order to set it to currentUser's uid
                   user_id: cred.user.uid
                 });
               })
