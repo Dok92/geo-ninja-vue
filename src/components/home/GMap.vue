@@ -40,9 +40,12 @@ export default {
                 },
                 map
               });
-              // add click event to marker
+              // add click event to marker to view users profile
               marker.addListener("click", () => {
-                console.log("map event");
+                this.$router.push({
+                  name: "ViewProfile",
+                  params: { id: doc.id }
+                });
               });
             }
           });
