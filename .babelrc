@@ -1,6 +1,9 @@
 {
   "sourceType": "module",
-  "presets": [
+  "presets": [ 
+    ["babel-preset-env", {
+       "targets": "current"
+     }],
     ["env", {
       "modules": "commonjs",
       "targets": {

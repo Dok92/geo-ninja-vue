@@ -25,6 +25,28 @@ export default {
         minZoom: 3,
         streetViewControl: false
       });
+
+      // create markers of the users geolocation for the map
+      db.collection("users")
+        .get()
+        .then(users => {
+          users.docs.forEach(doc => {
+            let data = doc.data();
+            if (data.geolocation) {
+              let marker = new google.maps.Marker({
+                position: {
+                  lat: data.geolocation.lat,
+                  lng: data.geolocation.lng
+                },
+                map
+              });
+              // add click event to marker
+              marker.addListener("click", () => {
+                console.log("map event");
+              });
+            }
+          });
+        });
     }
   },
   mounted() {

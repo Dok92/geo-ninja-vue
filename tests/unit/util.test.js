@@ -1,0 +1,1 @@
+import { login } from '../../src/components/auth/Login'
