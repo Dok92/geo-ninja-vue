@@ -3,7 +3,10 @@
     <div v-if="profile" class="card">
       <h2 class="deep-purple-text center">{{ profile.alias }}'s Wall</h2>
       <ul class="comments collection">
-        <li>Comment</li>
+        <li v-for="(comment, index) in comments" :key="index">
+          <div class="deep-purple-text">{{ comment.from }}</div>
+          <div class="grey-text text-darken-2">{{ comment.content }}</div>
+        </li>
       </ul>
       <form @submit.prevent="addComment">
         <div class="field">
@@ -26,7 +29,8 @@ export default {
       profile: null,
       newComment: null,
       feedback: null,
-      user: null
+      user: null,
+      comments: []
     };
   },
   created() {
@@ -49,6 +53,20 @@ export default {
       .then(user => {
         this.profile = user.data();
       });
+
+    // output comment
+    db.collection("comments")
+      .where("to", "==", this.$route.params.id)
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added") {
+            this.comments.unshift({
+              from: change.doc.data().from,
+              content: change.doc.data().content
+            });
+          }
+        });
+      });
   },
   methods: {
     addComment() {
@@ -57,7 +75,7 @@ export default {
         db.collection("comments")
           .add({
             to: this.$route.params.id,
-            from: this.user.id,
+            from: this.user.alias,
             content: this.newComment,
             time: Date.now()
           })
@@ -73,4 +91,16 @@ export default {
 </script>
 
   <style>
+.view-profile .card {
+  padding: 20px;
+  margin-top: 60px;
+}
+.view-profile h2 {
+  font-size: 2em;
+  margin-top: 0;
+}
+.view-profile li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
 </style>
